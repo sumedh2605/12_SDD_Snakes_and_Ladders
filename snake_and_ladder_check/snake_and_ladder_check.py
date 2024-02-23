@@ -20,12 +20,12 @@ def snake_and_ladder_check():
     # Check if the input matches any ladder key
     if projected_new_position in ladders:
         print(f"Ladder found! Climb from {projected_new_position} to {ladders[projected_new_position]}.")
-        confirmed_new_position = int(ladders[projected_new_position])  #the value that should be shared with other modules
+        confirmed_new_position = int(ladders[projected_new_position])  #used in sumedh's module
 
     # Check if the input matches any snakes key
     elif projected_new_position in snakes:
         print(f"Snake found! Slide down from {projected_new_position} to {snakes[projected_new_position]}.")
-        confirmed_new_position = int(snakes[projected_new_position]) #the value that should be shared with other modules
+        confirmed_new_position = int(snakes[projected_new_position]) #used in sumedh's module
 
     # If no match is found
     else:
