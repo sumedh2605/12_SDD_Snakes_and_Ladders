@@ -1,4 +1,4 @@
-projected_new_position = int(input("Enter an integer: "))
+
 
 ladders = {71: 92,
            61: 82,
@@ -15,7 +15,7 @@ snakes = {97: 78,
           35: 5}
 
 
-def snake_and_ladder_check():
+def snake_and_ladder_check(projected_new_position):
 
     # Check if the input matches any ladder key
     if projected_new_position in ladders:
@@ -31,6 +31,6 @@ def snake_and_ladder_check():
     else:
         print("No ladder or snake found for the given input.")
 
-    print(confirmed_new_position)
+    return int(confirmed_new_position)
 
 snake_and_ladder_check()
