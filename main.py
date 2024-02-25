@@ -28,13 +28,13 @@ Y = int(confirmed_position/10)
 X = int(confirmed_position%10)
 
 # loads all images and starting coordinates
-pawn1 = pygame.image.load('pawn.png')
+pawn1 = pygame.image.load(r'images/pawn.png')
 Xone, Yone = grid[0][0]
-pawn2 = pygame.image.load('pawn2.png')
+pawn2 = pygame.image.load(r'images/pawn2.png')
 Xtwo, Ytwo = grid[0][0]
-pawn3 = pygame.image.load('pawn3.png')
+pawn3 = pygame.image.load(r'images/pawn3.png')
 Xthree, Ythree = grid[0][0]
-pawn4 = pygame.image.load('pawn4.png')
+pawn4 = pygame.image.load(r'images/pawn4.png')
 Xfour, Yfour = grid[0][0]
 
 #lists for convinience
