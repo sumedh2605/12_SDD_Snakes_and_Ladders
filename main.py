@@ -90,9 +90,9 @@ dice_images = [pygame.transform.scale(pygame.image.load(f"./dice_images/{i}.jpg"
 
 # Gaytri's code
 grid = []
-for i in range (700, 0, -70):#y coordinate
+for i in range (649, -19, -70):#y coordinate
     row = []
-    for j in range (0, 700, 70):#x coordinates
+    for j in range (19, 719, 70):#x coordinates
         row.append((j,i))
     grid.append(row)
 
@@ -179,17 +179,17 @@ def find_next_player(current_player, player_count):
 def movement(X, Y, d, player_turn, dice_sum):
     if d < dice_sum:
         pygame.display.update()
-        if Y == 675 or Y == 525 or Y == 375 or Y == 225 or Y == 75:  # switch direction every other row
-            X -= 65
-        else:
+        if Y == 649 or Y == 509 or Y == 369 or Y == 229 or Y == 89:  # switch direction every other row
             X += 65
+        else:
+            X -= 65
 
-        if X > 675:  # border to go up one row
-            X = 675
-            Y -= 65
-        if X < 0:
-            X = 0
-            Y -= 65
+        if X > 649:  # border to go up one row
+            X = 649
+            Y -= 70
+        if X < 19:
+            X = 19
+            Y -= 70
         coords[player_turn-1][0] = X
         coords[player_turn-1][1] = Y
     print(f"Movement X= {X}, Y={Y}")
