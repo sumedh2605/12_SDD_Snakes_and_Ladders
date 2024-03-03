@@ -1,7 +1,7 @@
 from random import choice
 dice_numbers=[1,2,3,4,5,6]
 
-def roll_dice(player_id):
+def roll_dice():
     """ Rolls dice for player
 
     Args:

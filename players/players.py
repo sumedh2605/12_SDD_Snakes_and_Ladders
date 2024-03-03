@@ -2,7 +2,15 @@ import logging
 from typing import List, Dict
 from snake_and_ladder_check import snake_and_ladder_check
 
+# dict to hold all players 
 players={}
+# winners
+winners=[]
+
+winner_pos = 1
+
+
+
 
 def create_players(num_of_players: int):
     """ create palyers based on input provided 
@@ -11,36 +19,27 @@ def create_players(num_of_players: int):
         num_of_players (int): number of players participating in game
 
     Returns:
-        List[dict]: List of palayers participating in game, Each player is represented as dictionary
+        List[int]: List of palayers participating in game
     """
 
     for count in range(num_of_players):
-        # players[f'{count}+1'] = {
-        #         'current_position': 0,
-        #         'new_position': 0,
-        #         'is_reached_end_tile': False,
-        #         'Winner_pos': 0,
-        #         'got_next_turn': False,
-        #         'snake_bite_count': 0,
-        #         'ladder_encountered_count': 0
-        #         }
+      
         player = {
                 'current_position': 0,
                 'projected_new_position': 0,
                 'new_position': 0,
-                'is_completed_game': False,
-                'Winner_pos': 0,
-                'got_next_turn': False,
+                'is_completed_game': 0,
+                'winner_pos': 0,
                 'snake_bite_count': 0,
-                'ladder_encountered_count': 0
+                'ladder_encountered_count': 0,
+                'consecutive_turn_count': 0,
+                'overrun_count': 0
                 }
         players[f'{count+1}'] = player
     logging.info(f"Created players : {players}")
     print(f"Created players : {players}")
-    return players    
+    return [int(player) for player in players.keys()]    
 
-def update_is_completed_game(player_id: int, status: False):
-    players[f'{player_id}']['is_completed_game'] = status
 
 def update_player_new_position(player_id: int , confirmed_new_pos: int) -> None:
     """ update players new_position
@@ -49,10 +48,124 @@ def update_player_new_position(player_id: int , confirmed_new_pos: int) -> None:
         player_id (int): player id
         confirmed_new_pos (int): new player position
     """
-    print("INSIDE update_player new_psotion")
-    print(f"players = {players}")
+ 
     players[f'{player_id}']['new_position'] = confirmed_new_pos
     print(f"updated players new_position to {confirmed_new_pos}")
+    print("INSIDE update_player new_psotion")
+    print(f"players = {players}")
+
+
+def update_winner_position(player_id: int, winner_pos: int):
+    """Update "winner_pos" for a player
+
+    Args:
+        player_id (int): Player id
+        winner_pos (int): winner pos
+    """
+    players[f'{player_id}']['winner_pos'] = winner_pos
+    winner_pos = winner_pos + 1
+
+
+def increment_players_ladder_encountered_count(player_id: int):
+    """Increment player's ladder_encountered_count whenever player climbs ladder
+
+    Args:
+        player_id (int): player id
+    """
+    players[f'{player_id}']['ladder_encountered_count'] = players[f'{player_id}']['ladder_encountered_count'] + 1
+
+
+def increment_players_snake_bite_count(player_id: int):
+    """Increment player's snake_bite_count whenever player got snake bite
+
+    Args:
+        player_id (int): player id
+    """
+    players[f'{player_id}']['snake_bite_count'] = players[f'{player_id}']['snake_bite_count'] + 1
+
+
+def update_is_completed_game(player_id: int, status: int):
+    """ Updates player's is_completed_status
+
+    Args:
+        player_id (int): player id
+        status (int): 0 if player is still playing, 1 if player reached 100 tile
+
+    """
+    players[f'{player_id}']['is_completed_game'] = status
+
+
+def get_is_complted_game(player_id: int) -> int:
+    """Get player's is_completed_status
+
+    Args:
+        player_id (int): player id
+
+    Returns:
+        int: returns 
+    """
+    return players[f'{player_id}']['is_completed_game']
+
+
+def increment_consecutive_turn_count(player_id: int):
+    """ increment player's consecutive_turnm_count 
+
+    Args:
+        player_id (int): player id
+    """
+    players[f'{player_id}']['consecutive_turn_count'] = players[f'{player_id}']['consecutive_turn_count'] + 1
+
+
+def reset_consecutive_turn_count(player_id: int):
+    """ reset player's consecutive_turn_count
+
+    Args:
+        player_id (int): player id
+    """
+    players[f'{player_id}']['consecutive_turn_count'] = 0
+
+
+def get_consecutive_turn_count(player_id: int):
+    """
+
+    Args:
+        player_id (int): player id
+
+    Returns:
+        int: player's consecutive_turn_count
+    """
+    return players[f'{player_id}']['consecutive_turn_count']
+
+
+def increment_overrun_count(player_id: int):
+    """increment overrun_count
+
+    Args:
+        player_id (int): player id
+    """
+    players[f'{player_id}']['overrun_count'] = players[f'{player_id}']['overrun_count'] + 1
+
+
+def get_overrun_count(player_id: int):
+    """ get player's overrun count
+
+    Args:
+        player_id (int): player id
+
+    Returns:
+        int: player's overrun_count
+    """
+    return players[f'{player_id}']['overrun_count']
+
+
+def reset_overrun_count(player_id: int):
+    """ reset player's overrun_count 
+
+    Args:
+        player_id (int): player id
+    """
+    players[f'{player_id}']['overrun_count'] = 0
+
 
 
 def update_player_current_postion(player_id : int) -> None:
@@ -94,6 +207,7 @@ def get_players_new_position(player_id: int) -> int:
     new_pos = players[f'{player_id}']['new_position']
     return new_pos
 
+
 def update_snake_byte_count(player_id: int) -> int:
     """_summary_
 
@@ -130,28 +244,50 @@ def get_players_projected_new_position(player_id:int )->int:
 
 
 def calulate_players_new_position(player_id:int, dice_sum: int ):
-    """
+    """Calculate and update players projected new position and confirmed new pos
+
     Args:
-        player_id (int): _description_
+        player_id (int): player id
+        dice_sum (int): dice roll sum
+
+    Returns:
+        None: 
     """
+    
     confirmed_new_pos=None
     current_position = get_player_current_postion(player_id=player_id)
-    projected_new_position = current_position + dice_sum
-    print(f"Calculate function:: projected_new_position = {projected_new_position}")
-    if (projected_new_position > 100):
+    projected_new_position = current_position + dice_sum    
+    
+    if (projected_new_position > 100) and get_overrun_count(player_id=player_id) < 10:
         print(f"Cant play as {projected_new_position} is > 100")
+        increment_overrun_count(player_id=player_id)
+        projected_new_position=current_position
+        confirmed_new_pos = current_position
+        
+    elif (projected_new_position > 100) and get_overrun_count(player_id=player_id)==10:
+        print(f"Overrun but player is allowed to play and reached final position")
+        projected_new_position = 100
+        confirmed_new_pos = 100
+        update_is_completed_game(player_id=player_id, status=1)
+        update_winner_position(player_id=player_id, winner_pos=winners)
+        update_winners_list(player_id=player_id)
     elif projected_new_position == 100:
         print(f"{player_id} is Winner")
-        update_is_completed_game(player_id=player_id, status=True)
-    else:
-        
-        update_players_projected_new_position(player_id=player_id, pos=projected_new_position)
-
+        confirmed_new_pos = 100
+        update_is_completed_game(player_id=player_id, status=1)
+    else:   
         # confirm tentative_new position from backend module 2
-        confirmed_new_pos = snake_and_ladder_check.snake_and_ladder_check(projected_new_position=projected_new_position)
-        print(f"projected_new_postition = {projected_new_position}")
-        print(f"confirmed_new_postition = {confirmed_new_pos}")
-        update_player_new_position(player_id=player_id, confirmed_new_pos=confirmed_new_pos)
+        status, confirmed_new_pos = snake_and_ladder_check.snake_and_ladder_check(projected_new_position=projected_new_position)
+        reset_overrun_count(player_id=player_id)
+        if status == "Ladder" :
+            increment_players_ladder_encountered_count(player_id=player_id)
+        elif status == "Snake" :
+            increment_players_snake_bite_count(player_id=player_id)
+
+    print(f"Calculate function:: projected_new_position = {projected_new_position}")
+    print(f"confirmed_new_postition = {confirmed_new_pos}")
+    update_players_projected_new_position(player_id=player_id, pos=projected_new_position)
+    update_player_new_position(player_id=player_id, confirmed_new_pos=confirmed_new_pos)
         
     # confirmed_new_pos = projected_new_position # need to remove once above function is done by Sufi
     return projected_new_position, confirmed_new_pos
@@ -167,16 +303,56 @@ def get_players_movement_sequence(player_id:int) -> List:
     new_position = get_players_new_position(player_id=player_id)
     return tentative_position, new_position
 
+
+def update_consecutive_turn_all_players(player_id: int):
+    """ update consecutive_turn for all players, 
+    this function increases consecutive_turn for player whos player id matches,
+    otherwise resets consecutive_turn 
+
+    Args:
+        player_id (int): player id
+    """
+    for key in players.keys():
+        if key != f'{player_id}':
+            reset_consecutive_turn_count(key)
+        else:
+            increment_consecutive_turn_count(key)
+        
+
 def play(player_id: int, dice_sum:int):
-    
-    # check new_position from (backend module2): check if new roll_sum will land player to snake or ladder
-    # tentative_position= get_player_current_postion(player_id=player_id) + dice_sum
+    """ Play for players id, this function calculates player's projected new position and 
+    confirmed new position based on player's current position and dice sum
+
+    Args:
+        player_id (int): player id
+        dice_sum (int): dice sum
+
+    Returns:
+        (int, int) : projected_new_position and confirmed_new_position
+    """
     
     projected_new_position, confirmed_new_position = calulate_players_new_position(player_id=player_id,dice_sum=dice_sum)
     
-    # # update players new position
-    # update_player_new_position(player_id=1,confirmed_new_pos=confirmed_new_position)
-    # players.update_player_current_postion(player_id='1')
+    # update consecutive_turn for all players
+    update_consecutive_turn_all_players(player_id=player_id)
+
     print(f"player:play = {projected_new_position}, {confirmed_new_position}")
     return projected_new_position, confirmed_new_position
 
+def update_winners_list(player_id: int):
+    """Update winner list
+
+    Args:
+        player_id (int): player id
+    """
+    winners.append(player_id)
+
+
+def get_winners() -> List:
+    """Returns winners list in winning order
+
+    Returns:
+        List: winners list
+    """
+    
+    return winners

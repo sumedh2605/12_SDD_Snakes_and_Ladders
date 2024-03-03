@@ -3,7 +3,8 @@
 import pygame
 import sys
 import random
-from dice import dice
+# from dice import dice
+from dice import Roll_dice
 from button import button
 from players import players
 from uiconstants.constants import BLACK
@@ -28,7 +29,7 @@ font2 = pygame.font.SysFont("Ariel", 40)
 # set up clock
 clock = pygame.time.Clock()
 
-players_list=None
+players_list=[]
 
 # Update the display
 pygame.display.flip()
@@ -80,9 +81,9 @@ snake_and_ladder_board_image = pygame.image.load("./images/istockphoto-531466314
 game_board_image = pygame.transform.scale(snake_and_ladder_board_image, (700,700))
 
 # pawn images
-pawn1 = pygame.image.load("./pawn_images/pawn.png").convert_alpha()
-pawn2 = pygame.image.load("./pawn_images/pawn2.png").convert_alpha()
-pawn3 = pygame.image.load("./pawn_images/pawn3.png").convert_alpha()
+pawn1 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn.png").convert_alpha(), (40,40))
+pawn2 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn2.png").convert_alpha(), (40,40))
+pawn3 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn3.png").convert_alpha(), (40,40))
 pawn4 = pygame.image.load("./pawn_images/pawn4.png").convert_alpha()
 
 #dice images
@@ -90,26 +91,25 @@ dice_images = [pygame.transform.scale(pygame.image.load(f"./dice_images/{i}.jpg"
 
 # Gaytri's code
 grid = []
-for i in range (700, 0, -70):#y coordinate
+for i in range (650, 15, -70):#y coordinate
     row = []
-    for j in range (0, 700, 70):#x coordinates
+    for j in range (15, 650, 70):#x coordinates
         row.append((j,i))
     grid.append(row)
-
-
+print(f"grid = {grid}")
 # Pawns initialization
-Xone, Yone = grid[0][0]
-Xtwo, Ytwo = grid[0][0]
-Xthree, Ythree = grid[0][0]
-Xfour, Yfour = grid[0][0]
+# Xone, Yone = grid[0][0]
+# Xtwo, Ytwo = grid[0][0]
+# Xthree, Ythree = grid[0][0]
+# Xfour, Yfour = grid[0][0]
+Xone, Yone = (15, 700)
+Xtwo, Ytwo = (45, 700)
+Xthree, Ythree = (75, 700)
+Xfour, Yfour = (105, 700)
 
-pawns = [pawn1, pawn2, pawn3, pawn4]
-pawn_names = ['1','2','3','4']
+# pawns = [pawn1, pawn2, pawn3, pawn4]
+# pawn_names = ['1','2','3','4']
 coords = [[Xone, Yone],[Xtwo, Ytwo], [Xthree, Ythree], [Xfour,Yfour]]
-ladderstartX, ladderstartY = grid[0][8]
-ladderendX, ladderendY = grid[4][7]
-snakestartX, snakestartY = grid[3][4]
-snakeendX, snakeendY = grid[1][2]
 
 r=0
 
@@ -131,12 +131,17 @@ def display_players(player_count):
         screen.blit(player_msg, (850, 491+30*player))
 
 
-def display_pawns(player_count):
-       #load all players onto board
-        screen.blit(pawn1, (850,491+30))
-        screen.blit(pawn2, (850, 491+60))
-        screen.blit(pawn3, (850, 491+90))
-        screen.blit(pawn4, (850, 491+120))
+# def display_pawns(player_count):
+#     #load all players onto board
+#     for i in range(player_count):
+#         screen.blit(pawn1, (coords[i][0], coords[i][1]))
+#         screen.blit(pawn2, (coords[1][0], coords[1][1]))
+#         screen.blit(pawn3, (coords[2][0], coords[2][1]))
+#         screen.blit(pawn4, (coords[3][0], coords[3][1]))    
+#         # screen.blit(pawn1, (850,491+30))
+#         # screen.blit(pawn2, (850, 491+60))
+#         # screen.blit(pawn3, (850, 491+90))
+#         # screen.blit(pawn4, (850, 491+120))
      
         
 # Function to display whose turn it is to roll
@@ -145,8 +150,6 @@ def display_roll_message(player):
     msg = font2.render(f"Player{player}'s  turn. Click to roll the dice", True, (255, 255, 155))
     y_position = 599
     screen.blit(msg, (850, y_position))
-
-
 
 
 # Define a function to draw the label
@@ -167,86 +170,97 @@ def draw_leader():
     screen.blit(label, (label2_x, label2_y))
 
 
-def find_next_player(current_player, player_count):
-    print(f"current_player = {current_player}, player_count = {player_count}")
-    if current_player==player_count:
-        next_player = 1
+def find_next_player(current_player):
+    current_player_index = players_list.index(current_player)
+    print(f"current_player_index = {current_player_index}")
+    if current_player_index+1==len(players_list):
+        index = 0
+        next_player = players_list[index]
     else:
-        next_player = current_player + 1
+        index = current_player_index + 1
+        next_player = players_list[index]
     return next_player
+
 
 # gaytri needs to change
 def movement(X, Y, d, player_turn, dice_sum):
+    
     if d < dice_sum:
+        time.sleep(2)
         pygame.display.update()
-        if Y == 675 or Y == 525 or Y == 375 or Y == 225 or Y == 75:  # switch direction every other row
-            X -= 65
+        if Y==700: # players first turn
+            X = 15
+            Y = 650
         else:
-            X += 65
+            if Y == 650 or Y == 510 or Y == 370 or Y == 230 or Y == 90:  # switch direction every other row
+                X += 70
+            else:
+                X -= 70
 
-        if X > 675:  # border to go up one row
-            X = 675
-            Y -= 65
-        if X < 0:
-            X = 0
-            Y -= 65
+            if X > 700:  # border to go up one row
+                X = 645
+                Y -= 70
+            if X < 0:
+                X = 15
+                Y -= 70
         coords[player_turn-1][0] = X
         coords[player_turn-1][1] = Y
     print(f"Movement X= {X}, Y={Y}")
     return(X,Y)
-
-
-def move_player(player_turn,dice_sum, players_current_pos, players_tenatative_new_position, players_confirmed_new_position):
-    # quotient, remander =  divmod(players_current_pos, 10)
-    # print(f"quotient = {quotient}, remander = {remander}")
+    
+def move_player_vector(player_turn, players_current_pos, players_tenatative_new_position, players_confirmed_new_position):
     Xpos = coords[player_turn-1][0]
     Ypos = coords[player_turn-1][1]
 
-    # Xpos, Ypos = grid[quotient][remander]
+
+
+def move_player(player_turn, players_current_pos, players_tenatative_new_position, players_confirmed_new_position):
+    Xpos = coords[player_turn-1][0]
+    Ypos = coords[player_turn-1][1]
+
     print(f"XPos = {Xpos}, YPos = {Ypos}")
     
     r = 0
     print(f"players current position = {players_current_pos}, player_tentative_position = {players_tenatative_new_position}, players_confirmed_new_position = {players_confirmed_new_position}")
-    # Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=dice_sum)
-        # go to players tenatative new position 
-        # go to players confirmed new position
+   
 
     while r != players_tenatative_new_position - players_current_pos:
+        clock.tick(3)
         Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=players_tenatative_new_position - players_current_pos)
             
         r += 1 # increment the number of steps move
-        
+        # clock.tick(3)
+    r = 0  
 
     # ladder encountered
     if players_tenatative_new_position!=players_confirmed_new_position and players_tenatative_new_position < players_confirmed_new_position:
         print(f"Ladder encountered: value of r = {r}")
+
         while r != players_confirmed_new_position - players_tenatative_new_position:
             Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=players_tenatative_new_position - players_current_pos)
             r += 1 # increment the number of steps move
+            # clock.tick(3)
+    r=0
     # snake encountered
     if players_tenatative_new_position!=players_confirmed_new_position and players_tenatative_new_position > players_confirmed_new_position:
         print(f"Snake encountered : value of r = {r}")
         while r != players_tenatative_new_position - players_confirmed_new_position:
             Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=players_tenatative_new_position - players_current_pos)
             r -= 1 # increment the number of steps move
-    
+            # clock.tick(3)
+    r=0
     pygame.display.update()
 
 
-def snakeorladders(Xpos, Ypos, player_turn):
-    Xdif = (ladderendX - Xpos)
-    Ydif = (ladderendY -Ypos)
-    Xpos += Xdif
-    Ypos += Ydif
-    coords[player_turn][0] = Xpos
-    coords[player_turn][1] = Ypos
-    return (Xpos, Ypos)
-
 def game_board_screen(player_count):
+    clock = pygame.time.Clock()
+    clock.tick(3)
     pygame.display.set_caption("Snake and ladder: Game Board Screen")
     current_player = 1
     run=True
     while run:
+        clock = pygame.time.Clock()
+        clock.tick(4)
         screen.blit(background_image, background_image_rect)  # Draw background
         # display_players(player_count)
         # display_pawns(player_count=player_count)
@@ -273,7 +287,7 @@ def game_board_screen(player_count):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                pygame.QUIT()
+                # pygame.QUIT
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 display_roll_message(current_player)
@@ -281,12 +295,22 @@ def game_board_screen(player_count):
                     print(f"playing for current_player = {current_player}")
                 
                     # Roll the dice
+                    # dice1, dice2 = dice.roll_dice(player_id=current_player)
+                    dice_output = Roll_dice.dice_roll()
+                    dice1 = dice_output[0]
+                    dice2 = dice_output[1]
                     
-                    # dice1 = random.randint(1, 6)
-                    # dice2 = random.randint(1, 6)
-                    # print(f"Dice roll: {dice1}, {dice2}")
-                    dice1, dice2 = dice.roll_dice(player_id=current_player)
-                   
+                    dice_sum = dice1 + dice2
+                    if dice_sum == 12:
+                        # get consecutive turn count for player
+                        consecutive_turn_count = players.get_consecutive_turn_count(player_id=current_player)
+                        if consecutive_turn_count == 3:
+                            while dice_sum == 12 :
+                                dice_output = Roll_dice.dice_roll(player_id=current_player)
+                                dice1 = dice_output[0]
+                                dice2 = dice_output[1]
+                                dice_sum = dice1 + dice2
+         
                      # Update dice buttons based on the rolled values
                     dice1_button = button.Button(720, 350, dice_images[dice1 - 1], 0.06)
                     dice2_button = button.Button(850, 350, dice_images[dice2 - 1], 0.06)
@@ -313,18 +337,24 @@ def game_board_screen(player_count):
                     # Play turn for current player
                     players_current_pos = players.get_player_current_postion(current_player)
                     projected_new_pos, confirmed_new_position = players.play(current_player, dice_sum=dice_sum)
-                    
+                    if confirmed_new_position == 100:
+                        print(f"Player : {current_player} reached to 100 position")
+                        # remove player from players_list
+                        players_list.remove(current_player)
                     print(f"tentative_new_postion = {projected_new_pos}, confirmed_new_position = {confirmed_new_position}")
                     # Move player's piece, handle game logic here # Gayatri to fix below method
-                    move_player(current_player,dice_sum=dice_sum, players_current_pos=players_current_pos, players_tenatative_new_position=projected_new_pos, players_confirmed_new_position=confirmed_new_position)
-                    
+                    move_player(current_player, players_current_pos=players_current_pos, players_tenatative_new_position=projected_new_pos, players_confirmed_new_position=confirmed_new_position)
+                   
                     # Update players_current_pos
                     players.update_player_current_postion(player_id=current_player)
                     if dice_sum != 12:
                         
-                        # print(f"current players is = {current_player}")
-                        current_player=find_next_player(current_player, player_count)
+                        
+                        # current_player=find_next_player(current_player, player_count)
+                        current_player=find_next_player(current_player=current_player)
                         print(f"next players is = {current_player}")
+                    
+
 
         pygame.display.update()
         clock.tick(20)  # Limit frame rate to 30 FPS
@@ -345,7 +375,7 @@ def select_number_of_players_screen():
         select_three_players_button.draw(screen)
         select_four_players_button.draw(screen)
         
-        players_list = []
+        # players_list = []
 
         for event in pygame.event.get():
         #Quit Game
@@ -357,19 +387,19 @@ def select_number_of_players_screen():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if select_two_players_button.draw(screen):
                     player_count=2
-                    players_dict=players.create_players(2)
+                    players_list=players.create_players(2)
                     print(f"players_list = {players_list}")
                 if select_three_players_button.draw(screen):
                     player_count=3
-                    player_dict = players.create_players(3)
+                    players_list = players.create_players(3)
                     # players.create_players(3)
                 if select_four_players_button.draw(screen):
                     player_count = 4
-                    player_dict = players.create_players(4)
+                    players_list = players.create_players(4)
                     # players.create_players(4)
                 
                 print(f"players_list = {players_list}, player_count = {player_count}")
-                players_list = [i+1 for i in range(1, player_count)]
+                # players_list = [i+1 for i in range(1, player_count)]
                 game_board_screen(player_count)
 
 
