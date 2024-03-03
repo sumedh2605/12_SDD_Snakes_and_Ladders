@@ -70,7 +70,7 @@ select_four_players_button = button.Button(750, 200, select_four_players_img, 0.
 
 # Roll dice button image
 # button_img = pygame.image.load("./dice_images/click me.jpg").convert_alpha()
-roll_dice_button_img = pygame.transform.scale(pygame.image.load("./dice_images/click me.jpg").convert_alpha(), (100,100))
+roll_dice_button_img = pygame.transform.scale(pygame.image.load("./dice_images/click me.png").convert_alpha(), (100,100))
 roll_dice_button = button.Button(700, 600, roll_dice_button_img, 0.06)
 
 # background_image = pygame.image.load("./dice_images/bg.jpg")
@@ -404,8 +404,9 @@ while running:
             print(f"play")
             select_number_of_players_screen()
 
-        if play_button.draw(screen):
-            print(f"exit")
+        if exit_button.draw(screen):
+            running = False
+            
     pygame.display.update()
 
 # Quit pygame
