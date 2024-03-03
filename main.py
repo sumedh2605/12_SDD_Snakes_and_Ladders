@@ -8,11 +8,27 @@ from button import button
 from players import players
 from uiconstants.constants import BLACK
 from players import players
-from snake_and_ladder_check import snake_and_ladder_check
+import snake_and_ladder_check
 import time
 
 # Initialize pygame
 pygame.init()
+
+# snake and ladder board positions
+ladders2 = {(0, 7): (1, 9),
+           (0,6): (1,8),
+           (5,5): (4,6),
+           (5,3): (6,7),
+           (8,0): (9,2),
+           (5,0): (6,1)}
+
+snakes2 = {(6,9): (7,7),
+          (4,9): (5,5),
+          (7,8): (7,3),
+          (1,6): (7,1),
+          (1,3): (9,0),
+          (4,3): (4,0)}
+
 
 #Window
 SCREEN_HEIGHT = 800
@@ -96,7 +112,6 @@ for i in range (649, -19, -70):#y coordinate
         row.append((j,i))
     grid.append(row)
 
-
 # Pawns initialization
 Xone, Yone = grid[0][0]
 Xtwo, Ytwo = grid[0][0]
@@ -104,12 +119,8 @@ Xthree, Ythree = grid[0][0]
 Xfour, Yfour = grid[0][0]
 
 pawns = [pawn1, pawn2, pawn3, pawn4]
-pawn_names = ['1','2','3','4']
 coords = [[Xone, Yone],[Xtwo, Ytwo], [Xthree, Ythree], [Xfour,Yfour]]
-ladderstartX, ladderstartY = grid[0][8]
-ladderendX, ladderendY = grid[4][7]
-snakestartX, snakestartY = grid[3][4]
-snakeendX, snakeendY = grid[1][2]
+
 
 r=0
 
@@ -178,11 +189,15 @@ def find_next_player(current_player, player_count):
 # gaytri needs to change
 def movement(X, Y, d, player_turn, dice_sum):
     if d < dice_sum:
+        old_X, old_Y = X, Y  # Store old position for clearing later
         pygame.display.update()
+
+        # Clear the old position of the pawn by redrawing the background
+        screen.blit(game_board_image, (old_X, old_Y), pygame.Rect(old_X, old_Y, 32, 32))
         if Y == 649 or Y == 509 or Y == 369 or Y == 229 or Y == 89:  # switch direction every other row
-            X += 65
+            X += 70
         else:
-            X -= 65
+            X -= 70
 
         if X > 649:  # border to go up one row
             X = 649
@@ -192,8 +207,24 @@ def movement(X, Y, d, player_turn, dice_sum):
             Y -= 70
         coords[player_turn-1][0] = X
         coords[player_turn-1][1] = Y
+
     print(f"Movement X= {X}, Y={Y}")
+    screen.blit(pawns[player_turn - 1], (X, Y))
+    pygame.time.delay(60)
+    pygame.display.update()
     return(X,Y)
+
+def snakeorladders(Xpos, Ypos, Yproj, Xproj, player_turn):
+    print (f'projected:{Xproj},{Yproj}')
+    if (Xproj, Yproj) in ladders2:
+        print (f'ladder end: {ladders2[Xproj,Yproj]}')
+        new_X, new_Y= ladders2[Xproj, Yproj]
+    elif (Xproj, Yproj) in snakes2:
+        new_X,new_Y = snakes2[Xproj, Yproj]
+    Xpos,Ypos = grid[new_Y][new_X]
+    coords[player_turn][0] = Xpos
+    coords[player_turn][1] = Ypos
+    return (Xpos, Ypos)
 
 
 def move_player(player_turn,dice_sum, players_current_pos, players_tenatative_new_position, players_confirmed_new_position):
@@ -201,46 +232,45 @@ def move_player(player_turn,dice_sum, players_current_pos, players_tenatative_ne
     # print(f"quotient = {quotient}, remander = {remander}")
     Xpos = coords[player_turn-1][0]
     Ypos = coords[player_turn-1][1]
+    if players_confirmed_new_position != None:
+        Ycon, Xcon = (players_confirmed_new_position- 1) // 10, (players_confirmed_new_position-1)%10
+        print(f'Ycon,Xcon: {Ycon}, {Xcon}')
+        confirmed_pos = grid[Ycon][Xcon]
+    Yproj, Xproj = (players_tenatative_new_position-1) // 10, (players_tenatative_new_position-1) % 10
+    print(f'Yproj,Xproj: {Yproj}, {Xproj}')
+    if players_tenatative_new_position < 101:
+        proj_pos = grid[Yproj][Xproj]
+    else:
+        proj_pos = 200
 
     # Xpos, Ypos = grid[quotient][remander]
     print(f"XPos = {Xpos}, YPos = {Ypos}")
     
     r = 0
     print(f"players current position = {players_current_pos}, player_tentative_position = {players_tenatative_new_position}, players_confirmed_new_position = {players_confirmed_new_position}")
-    # Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=dice_sum)
-        # go to players tenatative new position 
-        # go to players confirmed new position
 
-    while r != players_tenatative_new_position - players_current_pos:
+
+    while r != players_tenatative_new_position - players_current_pos and players_confirmed_new_position != None:
         Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=players_tenatative_new_position - players_current_pos)
-            
+        screen.blit(pawns[player_turn - 1], (Xpos, Ypos))
+        pygame.time.delay(60)
+        pygame.display.update()
         r += 1 # increment the number of steps move
         
 
     # ladder encountered
-    if players_tenatative_new_position!=players_confirmed_new_position and players_tenatative_new_position < players_confirmed_new_position:
+    print (f'positions: {Xpos,Ypos}')
+    print (f'projected test: {proj_pos}')
+    if players_tenatative_new_position!=players_confirmed_new_position and (Xpos,Ypos) == proj_pos:
         print(f"Ladder encountered: value of r = {r}")
-        while r != players_confirmed_new_position - players_tenatative_new_position:
-            Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=players_tenatative_new_position - players_current_pos)
-            r += 1 # increment the number of steps move
-    # snake encountered
-    if players_tenatative_new_position!=players_confirmed_new_position and players_tenatative_new_position > players_confirmed_new_position:
-        print(f"Snake encountered : value of r = {r}")
-        while r != players_tenatative_new_position - players_confirmed_new_position:
-            Xpos, Ypos = movement(Xpos , Ypos, r, player_turn=player_turn, dice_sum=players_tenatative_new_position - players_current_pos)
-            r -= 1 # increment the number of steps move
+        Xpos, Ypos = snakeorladders(Xpos , Ypos, Yproj, Xproj, player_turn=player_turn)
+        screen.blit(pawns[player_turn - 1], (Xpos, Ypos))
+        pygame.time.delay(60)
+        pygame.display.update()
+
     
     pygame.display.update()
 
-
-def snakeorladders(Xpos, Ypos, player_turn):
-    Xdif = (ladderendX - Xpos)
-    Ydif = (ladderendY -Ypos)
-    Xpos += Xdif
-    Ypos += Ydif
-    coords[player_turn][0] = Xpos
-    coords[player_turn][1] = Ypos
-    return (Xpos, Ypos)
 
 def game_board_screen(player_count):
     pygame.display.set_caption("Snake and ladder: Game Board Screen")
@@ -251,17 +281,13 @@ def game_board_screen(player_count):
         # display_players(player_count)
         # display_pawns(player_count=player_count)
 
-      
-
         display_roll_message(current_player)
         draw_board()  # Draw board label
         # draw_leader()  # Draw leaderboard label
 
-          #load all players onto board # from gayatri
-        screen.blit(pawn1, (coords[0][0], coords[0][1]))
-        screen.blit(pawn2, (coords[1][0], coords[1][1]))
-        screen.blit(pawn3, (coords[2][0], coords[2][1]))
-        screen.blit(pawn4, (coords[3][0], coords[3][1]))
+        #load all players onto board # from gayatri
+        for i in range(player_count):
+            screen.blit(pawns[i], (coords[i][0],coords[i][1]))
         # Draw buttons
         roll_dice_button.draw(screen)
 
@@ -295,10 +321,7 @@ def game_board_screen(player_count):
                     screen.blit(background_image, background_image_rect)  # Draw background
                     display_players(player_count)
                     # display_pawns(player_count=player_count)
-                    screen.blit(pawn1, (coords[0][0], coords[0][1]))
-                    screen.blit(pawn2, (coords[1][0], coords[1][1]))
-                    screen.blit(pawn3, (coords[2][0], coords[2][1]))
-                    screen.blit(pawn4, (coords[3][0], coords[3][1]))
+
                     # display_roll_message(current_player)
                     draw_board()  # Draw board label
                     draw_leader()  # Draw leaderboard label
