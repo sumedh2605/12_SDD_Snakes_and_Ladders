@@ -189,10 +189,10 @@ def find_next_player(current_player, player_count):
 # gaytri needs to change
 def movement(X, Y, d, player_turn, dice_sum):
     if d < dice_sum:
-        old_X, old_Y = X, Y  # Store old position for clearing later
+        old_X, old_Y = X, Y 
         pygame.display.update()
 
-        # Clear the old position of the pawn by redrawing the background
+        # Create animation by replacing moved steps by background
         screen.blit(game_board_image, (old_X, old_Y), pygame.Rect(old_X, old_Y, 32, 32))
         if Y == 649 or Y == 509 or Y == 369 or Y == 229 or Y == 89:  # switch direction every other row
             X += 70
