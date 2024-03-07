@@ -35,17 +35,17 @@ players_list = []
 pygame.display.flip()
 
 # Defining starting cordinates of background image
-background_image_x = 0
-background_image_y = 0
+#background_image_x = 0
+#background_image_y = 0
 
 # Define the label position and text
-label_x = 90
-label_y = 200
+#label_x = 300
+#label_y = 200
 # label_text = "Snakes and Ladders"
 game_board_image_x = 0
 game_board_image_y = 0
-label_x = 10
-label_y = 10
+label_x = 500
+label_y = 200
 label2_x = 560
 label2_y = 70
 
@@ -57,22 +57,22 @@ background_image_rect = background_image.get_rect()
 start_image = pygame.image.load("./images/start.jpg").convert_alpha()
 exit_image = pygame.image.load("./images/exit.jpg").convert_alpha()
 # create button instance
-play_button = button.Button(250, 400, start_image, 0.8)
-exit_button = button.Button(600, 400, exit_image, 0.8)
+play_button = button.Button(350, 400, start_image, 0.8)
+exit_button = button.Button(700, 400, exit_image, 0.8)
 
 # select no of players images (from Shreeya's code)
 select_two_players_img = pygame.transform.scale(pygame.image.load("./images/player2.jpg").convert_alpha(), (200, 200))
 select_three_players_img = pygame.transform.scale(pygame.image.load("./images/player3.jpg").convert_alpha(), (200, 200))
 select_four_players_img = pygame.transform.scale(pygame.image.load("./images/player4.jpg").convert_alpha(), (200, 200))
-select_two_players_button = button.Button(150, 400, select_two_players_img, 0.8)
-select_three_players_button = button.Button(410, 400, select_three_players_img, 0.8)
-select_four_players_button = button.Button(670, 400, select_four_players_img, 0.8)
+select_two_players_button = button.Button(250, 400, select_two_players_img, 0.8)
+select_three_players_button = button.Button(510, 400, select_three_players_img, 0.8)
+select_four_players_button = button.Button(770, 400, select_four_players_img, 0.8)
 
 # Roll dice button image
 # button_img = pygame.image.load("./dice_images/click me.jpg").convert_alpha()
 roll_dice_button_img = pygame.transform.scale(pygame.image.load("./dice_images/click me.jpg").convert_alpha(),
                                               (100, 100))
-roll_dice_button = button.Button(900, 600, roll_dice_button_img, 0.06)
+roll_dice_button = button.Button(700, 600, roll_dice_button_img, 0.06)
 
 # background_image = pygame.image.load("./dice_images/bg.jpg")
 # background_image_rect = background_image.get_rect()
@@ -87,7 +87,7 @@ pawn3 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn3.png").conv
 pawn4 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn4.png").convert_alpha(), (40, 40))
 
 # dice images
-dice_images = [pygame.transform.scale(pygame.image.load(f"./dice_images/{i}.jpg").convert_alpha(), (100, 100)) for i in
+dice_images = [pygame.transform.scale(pygame.image.load(f"./dice_images/{i}.png").convert_alpha(), (100, 100)) for i in
                range(1, 7)]
 
 # Gaytri's code
@@ -128,15 +128,17 @@ current_player = 1  # Start with Player 1
 
 
 # Defining background
-def background():
-    screen.blit(background_image, (background_image_x, background_image_y))
+def background(background_image):
+    size = pygame.transform.scale(background_image,(1200,800))
+    screen.blit(size,(0,0))
 
 
 # Function to display players
 def display_players(player_count):
     for player in range(player_count):
-        player_msg = font1.render(f"Player{player}", True, (255, 255, 255))
-        screen.blit(player_msg, (850, 491 + 30 * player))
+        pass
+        #player_msg = font1.render(f"Player{player}", True, (255, 255, 255))
+        #screen.blit(player_msg, (850, 491 + 30 * player))
 
 
 def display_pawns(player_count):
@@ -155,9 +157,13 @@ def display_pawns(player_count):
 # Function to display whose turn it is to roll
 def display_roll_message(player):
     # print(f"display roll message player = {player}")
-    msg = font2.render(f"Player{player}'s  turn. Click to roll the dice", True, (255, 255, 155))
-    y_position = 599
-    screen.blit(msg, (850, y_position))
+    msg = font2.render(f"Player{player}'s turn.Click to roll the dice", True, (255, 255, 155))
+    y_position = 499
+    screen.blit(msg, (700, y_position))
+
+def draw_start_label():
+      label_text = font.render("Snakes N Ladders", True, "White")
+      screen.blit(label_text, (500, 200))
 
 
 # Define a function to draw the label
@@ -424,12 +430,13 @@ def move_player(player_turn, players_current_pos, players_tenatative_new_positio
 
 def game_board_screen(player_count):
     pygame.display.set_caption("Snake and ladder: Game Board Screen")
+    size = pygame.transform.scale(background_image,(1200,800))
     current_player = 1
     run = True
     while run:
         clock = pygame.time.Clock()
         # clock.tick(3)
-        screen.blit(background_image, background_image_rect)  # Draw background
+        screen.blit(size,(0,0))  # Draw background
         display_roll_message(current_player)
         draw_board()  # Draw board label
         # draw_leader()  # Draw leaderboard label
@@ -460,54 +467,55 @@ def game_board_screen(player_count):
                     print(f"playing for current_player = {current_player}")
 
                     # Roll the dice
+                    for i in range(6):
                     # dice1, dice2 = dice.roll_dice(player_id=current_player)
-                    dice_output = Roll_dice.dice_roll()
-                    dice1 = dice_output[0]
-                    dice2 = dice_output[1]
+                        dice_output = Roll_dice.dice_roll()
+                        dice1 = dice_output[0]
+                        dice2 = dice_output[1]
 
-                    dice_sum = dice1 + dice2
-                    print(f"*** player_id = {current_player}")
-                    unlucky_rolls = players.get_unlucky_roll_list(player_id=current_player)
-                    print(f"unlucky_rolls = {unlucky_rolls}")
-                    if unlucky_rolls != None:
-                        while (dice_sum in unlucky_rolls):
-                            dice_output = Roll_dice.dice_roll()
+                        dice_sum = dice1 + dice2
+                        print(f"*** player_id = {current_player}")
+                        unlucky_rolls = players.get_unlucky_roll_list(player_id=current_player)
+                        print(f"unlucky_rolls = {unlucky_rolls}")
+                        if unlucky_rolls != None:
+                            while (dice_sum in unlucky_rolls):
+                                dice_output = Roll_dice.dice_roll()
 
-                            dice1 = dice_output[0]
-                            dice2 = dice_output[1]
-                            dice_sum = dice1 + dice2
-                            print(f"lucky_roll dice_sum {dice_sum} = {dice1} + {dice2}")
-
-                    if dice_sum == 12:
-                        # get consecutive turn count for player
-                        consecutive_turn_count = players.get_consecutive_turn_count(player_id=current_player)
-                        if consecutive_turn_count == 3:
-                            while dice_sum == 12:
-                                dice_output = Roll_dice.dice_roll(player_id=current_player)
                                 dice1 = dice_output[0]
                                 dice2 = dice_output[1]
                                 dice_sum = dice1 + dice2
+                                print(f"lucky_roll dice_sum {dice_sum} = {dice1} + {dice2}")
+
+                        if dice_sum == 12:
+                        # get consecutive turn count for player
+                            consecutive_turn_count = players.get_consecutive_turn_count(player_id=current_player)
+                            if consecutive_turn_count == 3:
+                                while dice_sum == 12:
+                                    dice_output = Roll_dice.dice_roll(player_id=current_player)
+                                    dice1 = dice_output[0]
+                                    dice2 = dice_output[1]
+                                    dice_sum = dice1 + dice2
 
                     # Update dice buttons based on the rolled values
-                    dice1_button = button.Button(720, 350, dice_images[dice1 - 1], 0.06)
-                    dice2_button = button.Button(850, 350, dice_images[dice2 - 1], 0.06)
-                    dice_sum = dice1 + dice2
+                        dice1_button = button.Button(720, 350, dice_images[dice1 - 1], 0.06)
+                        dice2_button = button.Button(850, 350, dice_images[dice2 - 1], 0.06)
+                        dice_sum = dice1 + dice2
 
-                    screen.blit(background_image, background_image_rect)  # Draw background
-                    display_players(player_count)
-                    display_pawns(player_count=player_count)
+                        #screen.blit(background_image, background_image_rect)  # Draw background
+                        display_players(player_count)
+                        display_pawns(player_count=player_count)
                     # screen.blit(pawn1, (coords[0][0], coords[0][1]))
                     # screen.blit(pawn2, (coords[1][0], coords[1][1]))
                     # screen.blit(pawn3, (coords[2][0], coords[2][1]))
                     # screen.blit(pawn4, (coords[3][0], coords[3][1]))
                     # display_roll_message(current_player)
-                    draw_board()  # Draw board label
-                    draw_leader()  # Draw leaderboard label
-                    roll_dice_button.draw(screen)
-                    dice1_button.draw(screen)
-                    dice2_button.draw(screen)
-                    pygame.display.update()
-                    pygame.time.delay(50)  # Add a delay of 50 milliseconds between frames
+                        draw_board()  # Draw board label
+                    #draw_leader()  # Draw leaderboard label
+                        roll_dice_button.draw(screen)
+                        dice1_button.draw(screen)
+                        dice2_button.draw(screen)
+                        pygame.display.update()
+                        pygame.time.delay(200)  # Add a delay of 50 milliseconds between frames
 
                     # Play turn for current player
                     players_current_pos = players.get_player_current_postion(current_player)
@@ -547,7 +555,7 @@ def select_number_of_players_screen():
     while run:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
         screen.fill("black")
-        background()
+        background(background_image)
         draw_label()
 
         select_two_players_button.draw(screen)
@@ -585,11 +593,12 @@ def select_number_of_players_screen():
 
 
 # Calling backgroung image
-background()
+background(background_image)
 # Create a game loop
 running = True
 while running:
 
+    draw_start_label()
     play_button.draw(screen)
     exit_button.draw(screen)
 
@@ -605,8 +614,9 @@ while running:
             print(f"play")
             select_number_of_players_screen()
 
-        if play_button.draw(screen):
+        if exit_button.draw(screen):
             print(f"exit")
+            running = False
     pygame.display.update()
 
 # Quit pygame
