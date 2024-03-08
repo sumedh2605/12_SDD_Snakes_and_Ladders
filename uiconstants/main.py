@@ -54,8 +54,8 @@ label2_y = 70
 background_image = pygame.image.load(r'./images/bg.jpg')
 background_image_rect = background_image.get_rect()
 # start and exit images
-start_image = pygame.image.load("./images/start.jpg").convert_alpha()
-exit_image = pygame.image.load("./images/exit.jpg").convert_alpha()
+start_image =  pygame.transform.scale(pygame.image.load("./dice_images/start2.png").convert_alpha(),(319,200))
+exit_image =  pygame.transform.scale(pygame.image.load("./dice_images/exit2.png").convert_alpha(),(319,200))
 # create button instance
 play_button = button.Button(250, 400, start_image, 0.8)
 exit_button = button.Button(600, 400, exit_image, 0.8)
@@ -70,14 +70,13 @@ select_four_players_button = button.Button(670, 400, select_four_players_img, 0.
 
 # Roll dice button image
 # button_img = pygame.image.load("./dice_images/click me.jpg").convert_alpha()
-roll_dice_button_img = pygame.transform.scale(pygame.image.load("./dice_images/click me.jpg").convert_alpha(),
-                                              (100, 100))
+roll_dice_button_img = pygame.transform.scale(pygame.image.load("./dice_images/roll2.png").convert_alpha(),(240, 150))
 roll_dice_button = button.Button(900, 600, roll_dice_button_img, 0.06)
 
 # background_image = pygame.image.load("./dice_images/bg.jpg")
 # background_image_rect = background_image.get_rect()
 # game board image
-snake_and_ladder_board_image = pygame.image.load("./images/istockphoto-531466314-1024x1024.jpg")
+snake_and_ladder_board_image = pygame.image.load("./dice_images/cleanedup_gameboard_resized.jpg")
 game_board_image = pygame.transform.scale(snake_and_ladder_board_image, (700, 700))
 
 # pawn images
