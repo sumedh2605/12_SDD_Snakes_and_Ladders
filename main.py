@@ -2,6 +2,8 @@
 import pygame
 import sys
 import random
+
+import players.players
 # from dice import dice
 from dice import Roll_dice
 from button import button
@@ -81,7 +83,7 @@ snake_and_ladder_board_image = pygame.image.load("./images/istockphoto-531466314
 game_board_image = pygame.transform.scale(snake_and_ladder_board_image, (700, 700))
 
 # pawn images
-pawn1 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn.png").convert_alpha(), (40, 40))
+pawn1 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn1.png").convert_alpha(), (40, 40))
 pawn2 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn2.png").convert_alpha(), (40, 40))
 pawn3 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn3.png").convert_alpha(), (40, 40))
 pawn4 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn4.png").convert_alpha(), (40, 40))
@@ -277,7 +279,42 @@ def move_player_from_current_pos_to_target_pos(player_count, player_turn, player
         move_source_to_target_diagonal(player_count, player_turn, player_vector,
                                        current_pos=players_tenatative_new_position,
                                        target_pos=players_confirmed_new_position)
+# Gayatri's code
+def resizing(player_count,current):
+    print (players_list)
+    for i in range(1,player_count+1):
+        if players.get_players_new_position(i) > 0:
+            print ('positions')
+            print (current)
+            print(players.get_players_new_position(i), i)
+            print(players.get_players_new_position(current))
+            print(f'beginning: {resized[i - 1]} for {i}')
+            if i != current:
+                if players.get_players_new_position(i) == players.get_players_new_position(current):
+                    pawns[i - 1] = pygame.transform.scale(pawns[i - 1], (20, 20))
+                    pawns[current - 1] = pygame.transform.scale(pawns[current - 1], (20, 20))
+                    resized[i - 1] = True
+                    resized[current - 1] = True
+                    if i == 1 or current == 1:  # updates their location and size on grid for visibility
+                        coords[0][0] += 25
+                        coords[0][1] += 10
+                    if i == 2 or current == 2:
+                        coords[1][0] += 25
+                        coords[1][1] -= 10
+                    if i == 3 or current == 3:
+                        coords[2][0] -= 5
+                        coords[2][1] += 10
+                    if i == 4 or current == 4:
+                        coords[3][0] -= 5
+                        coords[3][1] -= 10
+                    print(f'same spot: {resized[i - 1]} for {i}')
 
+                elif resized[current-1]:
+                    resized[current-1] = False
+                    pawns[current-1] = pygame.transform.scale(pygame.image.load(f"./pawn_images/pawn{current}.png").convert_alpha(), (40, 40))
+
+
+            pygame.display.update()
 
 def final_results_screen():
     print("Game Over !!! screen with All states for player")
@@ -360,9 +397,6 @@ def game_board_screen(player_count):
                     players_current_pos = players.get_player_current_postion(current_player)
                     projected_new_pos, confirmed_new_position = players.play(current_player, dice_sum=dice_sum)
 
-
-
-
                     # Move player from current position to target position
                     if players_current_pos != 100:
                         move_player_from_current_pos_to_target_pos(player_count, current_player,
@@ -372,6 +406,7 @@ def game_board_screen(player_count):
 
                         # Update players_current_pos
                         players.update_player_current_postion(player_id=current_player)
+                    resizing(player_count, current_player)
                     if dice_sum != 12:
 
                         # check if all players reach on hundered/winning position
@@ -380,6 +415,7 @@ def game_board_screen(player_count):
                             print(f"next players is = {current_player}")
                         else:
                             print(f"Game Over !!!!")
+
 
         pygame.display.update()
 
