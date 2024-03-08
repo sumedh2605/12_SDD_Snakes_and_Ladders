@@ -281,21 +281,16 @@ def move_player_from_current_pos_to_target_pos(player_count, player_turn, player
                                        target_pos=players_confirmed_new_position)
 # Gayatri's code
 def resizing(player_count,current):
-    print (players_list)
     for i in range(1,player_count+1):
         if players.get_players_new_position(i) > 0:
-            print ('positions')
-            print (current)
-            print(players.get_players_new_position(i), i)
-            print(players.get_players_new_position(current))
-            print(f'beginning: {resized[i - 1]} for {i}')
             if i != current:
+                # checks if the new position is same as any other pawn position
                 if players.get_players_new_position(i) == players.get_players_new_position(current):
-                    pawns[i - 1] = pygame.transform.scale(pawns[i - 1], (20, 20))
+                    pawns[i - 1] = pygame.transform.scale(pawns[i - 1], (20, 20)) # resizes pawn
                     pawns[current - 1] = pygame.transform.scale(pawns[current - 1], (20, 20))
                     resized[i - 1] = True
                     resized[current - 1] = True
-                    if i == 1 or current == 1:  # updates their location and size on grid for visibility
+                    if i == 1 or current == 1:  # updates their location on grid for visibility
                         coords[0][0] += 25
                         coords[0][1] += 10
                     if i == 2 or current == 2:
@@ -306,9 +301,9 @@ def resizing(player_count,current):
                         coords[2][1] += 10
                     if i == 4 or current == 4:
                         coords[3][0] -= 5
-                        coords[3][1] -= 10
-                    print(f'same spot: {resized[i - 1]} for {i}')
+                        coords[3][1] -= 1
 
+                # resizes the pawn to normal at next turn
                 elif resized[current-1]:
                     resized[current-1] = False
                     pawns[current-1] = pygame.transform.scale(pygame.image.load(f"./pawn_images/pawn{current}.png").convert_alpha(), (40, 40))
