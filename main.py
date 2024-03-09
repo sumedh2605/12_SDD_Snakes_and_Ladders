@@ -285,24 +285,29 @@ def resizing1(player_count,current):
         if players.get_players_new_position(i) > 0:
             if i != current:
                 # checks if the new position is same as any other pawn position
+                k = i
+                c = current
                 if players.get_players_new_position(i) == players.get_players_new_position(current):
                     pawns[i - 1] = pygame.transform.scale(pawns[i - 1], (20, 20)) # resizes pawn
                     pawns[current - 1] = pygame.transform.scale(pawns[current - 1], (20, 20))
-                    resized[i - 1] = True
-                    resized[current - 1] = True
-                    if i == 1 or current == 1:  # updates their location on grid for visibility
+                    if resized[i-1]:
+                        k = None
+                    if resized[current-1]:
+                        c = None
+                    if k == 1 or c == 1:  # updates their location on grid for visibility
                         coords[0][0] += 18
                         coords[0][1] += 10
-                    if i == 2 or current == 2:
+                    if k == 2 or c == 2:
                         coords[1][0] += 18
                         coords[1][1] -= 10
-                    if i == 3 or current == 3:
+                    if k == 3 or c == 3:
                         coords[2][0] -= 5
                         coords[2][1] += 10
-                    if i == 4 or current == 4:
+                    if k == 4 or c == 4:
                         coords[3][0] -= 5
                         coords[3][1] -= 10
-
+                    resized[i - 1] = True
+                    resized[current - 1] = True
 def resizing2(player_count,current):
     for i in range(1, player_count + 1):
         if players.get_players_new_position(i) > 0:
@@ -412,7 +417,7 @@ def game_board_screen(player_count):
 
                     # Changes the pawns coordinates and resizes them when they are on same square
                     resizing1(player_count, current_player)
-                    
+
                     if dice_sum != 12:
 
                         # check if all players reach on hundered/winning position
