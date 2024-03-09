@@ -280,8 +280,7 @@ def move_player_from_current_pos_to_target_pos(player_count, player_turn, player
                                        current_pos=players_tenatative_new_position,
                                        target_pos=players_confirmed_new_position)
 # Gayatri's code
-def resizing(player_count,current):
-    done = False
+def resizing1(player_count,current):
     for i in range(1,player_count+1):
         if players.get_players_new_position(i) > 0:
             if i != current:
@@ -292,10 +291,10 @@ def resizing(player_count,current):
                     resized[i - 1] = True
                     resized[current - 1] = True
                     if i == 1 or current == 1:  # updates their location on grid for visibility
-                        coords[0][0] += 25
+                        coords[0][0] += 18
                         coords[0][1] += 10
                     if i == 2 or current == 2:
-                        coords[1][0] += 25
+                        coords[1][0] += 18
                         coords[1][1] -= 10
                     if i == 3 or current == 3:
                         coords[2][0] -= 5
@@ -303,16 +302,19 @@ def resizing(player_count,current):
                     if i == 4 or current == 4:
                         coords[3][0] -= 5
                         coords[3][1] -= 10
-                    # changes the status that the resizing has happened to stop image being resized to normal
-                    done = True
 
-                # resizes the pawn to normal at next turn
-                elif resized[current-1] and not done:
-                    resized[current-1] = False
-                    pawns[current-1] = pygame.transform.scale(pygame.image.load(f"./pawn_images/pawn{current}.png").convert_alpha(), (40, 40))
-
-
-            pygame.display.update()
+def resizing2(player_count,current):
+    for i in range(1, player_count + 1):
+        if players.get_players_new_position(i) > 0:
+            if i != current:
+                # resizes the pawn to normal when the current pawns old position is another pawns current position
+                if players.get_player_current_postion(current) == players.get_player_current_postion(i):
+                    resized[current - 1] = False
+                    pawns[current - 1] = pygame.transform.scale(
+                        pygame.image.load(f"./pawn_images/pawn{current}.png").convert_alpha(), (40, 40))
+                    resized[i - 1] = False
+                    pawns[i - 1] = pygame.transform.scale(
+                        pygame.image.load(f"./pawn_images/pawn{i}.png").convert_alpha(), (40, 40))
 
 def final_results_screen():
     print("Game Over !!! screen with All states for player")
@@ -395,6 +397,9 @@ def game_board_screen(player_count):
                     players_current_pos = players.get_player_current_postion(current_player)
                     projected_new_pos, confirmed_new_position = players.play(current_player, dice_sum=dice_sum)
 
+                    # Makes sure pawns are normal size when not on the same square
+                    resizing2(player_count, current_player)
+
                     # Move player from current position to target position
                     if players_current_pos != 100:
                         move_player_from_current_pos_to_target_pos(player_count, current_player,
@@ -404,7 +409,10 @@ def game_board_screen(player_count):
 
                         # Update players_current_pos
                         players.update_player_current_postion(player_id=current_player)
-                    resizing(player_count, current_player)
+
+                    # Changes the pawns coordinates and resizes them when they are on same square
+                    resizing1(player_count, current_player)
+                    
                     if dice_sum != 12:
 
                         # check if all players reach on hundered/winning position
