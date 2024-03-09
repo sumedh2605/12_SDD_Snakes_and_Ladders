@@ -281,6 +281,7 @@ def move_player_from_current_pos_to_target_pos(player_count, player_turn, player
                                        target_pos=players_confirmed_new_position)
 # Gayatri's code
 def resizing(player_count,current):
+    done = False
     for i in range(1,player_count+1):
         if players.get_players_new_position(i) > 0:
             if i != current:
@@ -301,10 +302,12 @@ def resizing(player_count,current):
                         coords[2][1] += 10
                     if i == 4 or current == 4:
                         coords[3][0] -= 5
-                        coords[3][1] -= 1
+                        coords[3][1] -= 10
+                    # changes the status that the resizing has happened to stop image being resized to normal
+                    done = True
 
                 # resizes the pawn to normal at next turn
-                elif resized[current-1]:
+                elif resized[current-1] and not done:
                     resized[current-1] = False
                     pawns[current-1] = pygame.transform.scale(pygame.image.load(f"./pawn_images/pawn{current}.png").convert_alpha(), (40, 40))
 
