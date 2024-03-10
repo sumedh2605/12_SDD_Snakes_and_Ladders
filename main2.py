@@ -111,6 +111,7 @@ current_player = 1  # Start with Player 1
 
 # Defining background
 def background():
+
     screen.blit(background_image, (background_image_x, background_image_y))
 
 
