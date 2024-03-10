@@ -24,9 +24,10 @@ SCREEN_WIDTH = 1200
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
 # Define a font object
-font = pygame.font.SysFont("Arial", 32)
+font = pygame.font.SysFont("Arial", 70)
 font1 = pygame.font.SysFont("Ariel", 45)
 font2 = pygame.font.SysFont("Ariel", 40)
+font3 = pygame.font.SysFont("Ariel", 100)
 
 # set up clock
 clock = pygame.time.Clock()
@@ -37,19 +38,21 @@ players_list = []
 pygame.display.flip()
 
 # Defining starting cordinates of background image
-background_image_x = 0
-background_image_y = 0
+#background_image_x = 0
+#background_image_y = 0
 
 # Define the label position and text
-label_x = 90
-label_y = 200
+#label_x = 300
+#label_y = 200
 # label_text = "Snakes and Ladders"
 game_board_image_x = 0
 game_board_image_y = 0
-label_x = 10
-label_y = 10
+label_x = 300
+label_y = 200
 label2_x = 560
 label2_y = 70
+label3_x = 400
+label3_y = 300
 
 # images in the game
 # background image
@@ -59,22 +62,22 @@ background_image_rect = background_image.get_rect()
 start_image = pygame.image.load("./images/start.jpg").convert_alpha()
 exit_image = pygame.image.load("./images/exit.jpg").convert_alpha()
 # create button instance
-play_button = button.Button(250, 400, start_image, 0.8)
-exit_button = button.Button(600, 400, exit_image, 0.8)
+play_button = button.Button(350, 400, start_image, 0.8)
+exit_button = button.Button(700, 400, exit_image, 0.8)
 
 # select no of players images (from Shreeya's code)
 select_two_players_img = pygame.transform.scale(pygame.image.load("./images/player2.jpg").convert_alpha(), (200, 200))
 select_three_players_img = pygame.transform.scale(pygame.image.load("./images/player3.jpg").convert_alpha(), (200, 200))
 select_four_players_img = pygame.transform.scale(pygame.image.load("./images/player4.jpg").convert_alpha(), (200, 200))
-select_two_players_button = button.Button(150, 400, select_two_players_img, 0.8)
-select_three_players_button = button.Button(410, 400, select_three_players_img, 0.8)
-select_four_players_button = button.Button(670, 400, select_four_players_img, 0.8)
+select_two_players_button = button.Button(250, 400, select_two_players_img, 0.8)
+select_three_players_button = button.Button(510, 400, select_three_players_img, 0.8)
+select_four_players_button = button.Button(770, 400, select_four_players_img, 0.8)
 
 # Roll dice button image
 # button_img = pygame.image.load("./dice_images/click me.jpg").convert_alpha()
 roll_dice_button_img = pygame.transform.scale(pygame.image.load("./dice_images/click me.jpg").convert_alpha(),
                                               (100, 100))
-roll_dice_button = button.Button(900, 600, roll_dice_button_img, 0.06)
+roll_dice_button = button.Button(700, 600, roll_dice_button_img, 0.06)
 
 # background_image = pygame.image.load("./dice_images/bg.jpg")
 # background_image_rect = background_image.get_rect()
@@ -89,7 +92,7 @@ pawn3 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn3.png").conv
 pawn4 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn4.png").convert_alpha(), (40, 40))
 
 # dice images
-dice_images = [pygame.transform.scale(pygame.image.load(f"./dice_images/{i}.jpg").convert_alpha(), (100, 100)) for i in
+dice_images = [pygame.transform.scale(pygame.image.load(f"./dice_images/{i}.png").convert_alpha(), (100, 100)) for i in
                range(1, 7)]
 
 # Pawns Initial positions
@@ -110,15 +113,17 @@ current_player = 1  # Start with Player 1
 
 
 # Defining background
-def background():
-    screen.blit(background_image, (background_image_x, background_image_y))
+def background(background_image):
+    size = pygame.transform.scale(background_image,(1200,800))
+    screen.blit(size,(0,0))
 
 
 # Function to display players    -done by Shreya, modularise by sumedh
 def display_players(player_count):
     for player in range(player_count):
-        player_msg = font1.render(f"Player{player}", True, (255, 255, 255))
-        screen.blit(player_msg, (850, 491 + 30 * player))
+        pass
+        #player_msg = font1.render(f"Player{player}", True, (255, 255, 255))
+        #screen.blit(player_msg, (850, 491 + 30 * player))
 
 
 # Function to display pawns   -done by Gayatri, modularise by sumedh
@@ -130,10 +135,13 @@ def display_pawns(player_count):
 
 # Function to display whose turn it is to roll  -done by shreya, modularise by sumedh
 def display_roll_message(player):
-    msg = font2.render(f"Player{player}'s  turn. Click to roll the dice", True, (255, 255, 155))
-    y_position = 599
-    screen.blit(msg, (850, y_position))
+    msg = font2.render(f"Player{player}'s turn.Click to roll the dice", True, (255, 255, 155))
+    y_position = 499
+    screen.blit(msg, (700, y_position))
 
+def draw_start_label():
+      label_text = font.render("Snakes N Ladders", True, "White")
+      screen.blit(label_text, (390, 250))
 
 # Define a function to draw the label  -done by shreya, modularise by sumedh
 def draw_label():
@@ -141,6 +149,16 @@ def draw_label():
     label = font.render("Select number of players", True, "White")
     label_rect = label.get_rect()
     label_rect.topleft = (label_x, label_y)
+    screen.blit(label, label_rect)
+
+def draw_label2():
+    # Draw the label text
+    #screen.fill("Black")
+    size = pygame.transform.scale(background_image,(1200,800))
+    screen.blit(size,(0,0))
+    label = font3.render("Game Over", True, "White")
+    label_rect = label.get_rect()
+    label_rect.topleft = (label3_x, label3_y)
     screen.blit(label, label_rect)
 
 
@@ -327,11 +345,13 @@ def final_results_screen():
 # Its an integration module by sumedh
 def game_board_screen(player_count):
     pygame.display.set_caption("Snake and ladder: Game Board Screen")
+    size = pygame.transform.scale(background_image,(1200,800))
     current_player = 1
     run = True
     while run:
         clock = pygame.time.Clock()
-        screen.blit(background_image, background_image_rect)  # Draw background
+        # clock.tick(3)
+        screen.blit(size,(0,0))  # Draw background
         display_roll_message(current_player)
         draw_board()  # Draw board label
         # draw_leader()  # Draw leaderboard label
@@ -351,52 +371,61 @@ def game_board_screen(player_count):
             if event.type == pygame.QUIT:
                 run = False
                 # pygame.QUIT
+                draw_label2()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 display_roll_message(current_player)
                 if roll_dice_button.rect.collidepoint(event.pos):
-                    # Roll dice for current player
-                    dice_output = Roll_dice.dice_roll()
-                    dice1 = dice_output[0]
-                    dice2 = dice_output[1]
-                    dice_sum = dice1 + dice2
+                    print(f"playing for current_player = {current_player}")
 
-                    # This is used mainly to find overrun count and provide players lucky roll
-                    unlucky_rolls = players.get_unlucky_roll_list(player_id=current_player)
+                    # Roll the dice
+                    for i in range(6):
+                    # dice1, dice2 = dice.roll_dice(player_id=current_player)
+                        dice_output = Roll_dice.dice_roll()
+                        dice1 = dice_output[0]
+                        dice2 = dice_output[1]
 
-                    if unlucky_rolls != None:
-                        while (dice_sum in unlucky_rolls):
-                            dice_output = Roll_dice.dice_roll()
-                            dice1 = dice_output[0]
-                            dice2 = dice_output[1]
-                            dice_sum = dice1 + dice2
-                    # get consecutive turn count for player
-                    if dice_sum == 12:
-                        consecutive_turn_count = players.get_consecutive_turn_count(player_id=current_player)
-                        # If consecutive_turn_count reaches to 3 , Make sure player will not get another roll with dice_sum=12
-                        if consecutive_turn_count == 3:
-                            while dice_sum == 12:
-                                dice_output = Roll_dice.dice_roll(player_id=current_player)
+                        dice_sum = dice1 + dice2
+                        print(f"*** player_id = {current_player}")
+                        unlucky_rolls = players.get_unlucky_roll_list(player_id=current_player)
+                        print(f"unlucky_rolls = {unlucky_rolls}")
+                        if unlucky_rolls != None:
+                            while (dice_sum in unlucky_rolls):
+                                dice_output = Roll_dice.dice_roll()
+
                                 dice1 = dice_output[0]
                                 dice2 = dice_output[1]
                                 dice_sum = dice1 + dice2
+                                print(f"lucky_roll dice_sum {dice_sum} = {dice1} + {dice2}")
+
+                        if dice_sum == 12:
+                        # get consecutive turn count for player
+                            consecutive_turn_count = players.get_consecutive_turn_count(player_id=current_player)
+                            if consecutive_turn_count == 3:
+                                while dice_sum == 12:
+                                    dice_output = Roll_dice.dice_roll(player_id=current_player)
+                                    dice1 = dice_output[0]
+                                    dice2 = dice_output[1]
+                                    dice_sum = dice1 + dice2
 
                     # Update dice buttons based on the rolled values
-                    dice1_button = button.Button(720, 350, dice_images[dice1 - 1], 0.06)
-                    dice2_button = button.Button(850, 350, dice_images[dice2 - 1], 0.06)
-                    dice_sum = dice1 + dice2
+                        dice1_button = button.Button(720, 350, dice_images[dice1 - 1], 0.06)
+                        dice2_button = button.Button(850, 350, dice_images[dice2 - 1], 0.06)
+                        dice_sum = dice1 + dice2
 
-                    screen.blit(background_image, background_image_rect)  # Draw background
-                    display_players(player_count)
-                    draw_board()  # Draw board label
+                        #screen.blit(background_image, background_image_rect)  # Draw background
+                        display_players(player_count)
+                        draw_board()  # Draw board label
 
                     # draw_leader()  # Draw leaderboard label
-                    display_pawns(player_count=player_count)
-                    roll_dice_button.draw(screen)
-                    dice1_button.draw(screen)
-                    dice2_button.draw(screen)
-                    pygame.display.update()
-                    pygame.time.delay(50)  # Add a delay of 50 milliseconds between frames
+                        display_pawns(player_count=player_count)
+                        roll_dice_button.draw(screen)
+                        dice1_button.draw(screen)
+                        dice2_button.draw(screen)
+                        display_players(player_count)
+                        display_pawns(player_count=player_count)
+                        pygame.display.update()
+                        pygame.time.delay(200)  # Add a delay of 50 milliseconds between frames
 
                     # Play turn for current player
                     players_current_pos = players.get_player_current_postion(current_player)
@@ -440,7 +469,7 @@ def select_number_of_players_screen():
     while run:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
         screen.fill("black")
-        background()
+        background(background_image)
         draw_label()
 
         select_two_players_button.draw(screen)
@@ -450,6 +479,7 @@ def select_number_of_players_screen():
         for event in pygame.event.get():
             # Quit Game
             if event.type == pygame.QUIT:
+                draw_label2()
                 run = False
                 pygame.QUIT()
                 sys.exit()
@@ -469,11 +499,12 @@ def select_number_of_players_screen():
 
 
 # Calling backgroung image
-background()
+background(background_image)
 # Create a game loop
 running = True
 while running:
 
+    draw_start_label()
     play_button.draw(screen)
     exit_button.draw(screen)
 
@@ -481,6 +512,7 @@ while running:
     for event in pygame.event.get():
         # If the user clicks the close button, exit the loop
         if event.type == pygame.QUIT:
+            draw_label2()
             running = False
             pygame.quit()
             sys.exit()
@@ -489,8 +521,10 @@ while running:
         if play_button.draw(screen):
             select_number_of_players_screen()
 
-        if play_button.draw(screen):
+        if exit_button.draw(screen):
             print(f"exit")
+            draw_label2()
+            running = False
     pygame.display.update()
 
 # Quit pygame
