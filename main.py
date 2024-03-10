@@ -86,7 +86,7 @@ snake_and_ladder_board_image = pygame.image.load("./images/istockphoto-531466314
 game_board_image = pygame.transform.scale(snake_and_ladder_board_image, (700, 700))
 
 # pawn images
-pawn1 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn.png").convert_alpha(), (40, 40))
+pawn1 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn1.png").convert_alpha(), (40, 40))
 pawn2 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn2.png").convert_alpha(), (40, 40))
 pawn3 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn3.png").convert_alpha(), (40, 40))
 pawn4 = pygame.transform.scale(pygame.image.load("./pawn_images/pawn4.png").convert_alpha(), (40, 40))
