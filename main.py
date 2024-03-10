@@ -13,6 +13,7 @@ from players import players
 from snake_and_ladder_check import snake_and_ladder_check
 import time
 from uiconstants.board_cord import board_cords
+from pygame import mixer
 
 # Initialize pygame
 pygame.init()
@@ -21,7 +22,7 @@ pygame.init()
 SCREEN_HEIGHT = 800
 SCREEN_WIDTH = 1200
 # Create a display surface object
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Define a font object
 font = pygame.font.SysFont("Arial", 70)
@@ -54,35 +55,57 @@ label2_y = 70
 label3_x = 400
 label3_y = 300
 
+#specifications for leaderboard_table (rows and columns)
+
+table_width = 400
+table_height = 150
+cell_width = 80
+cell_height = 30
+rows = 5
+cols = 5
+
+#coordinates for unmute and mute buttons
+mute_x = 850
+mute_y =70
+
+unmute_x = 1000
+unmute_y =70
+
+
 # images in the game
 # background image
-background_image = pygame.image.load(r'./images/bg.jpg')
+background_image = pygame.transform.scale(pygame.image.load(r'./images/bg ai gen.jpg').convert_alpha(),(1200,800))
 background_image_rect = background_image.get_rect()
+
+#mute and unmute images
+mute_button_image = pygame.transform.scale(pygame.image.load('./images/muted.png').convert_alpha(),(75,75))
+mute_button = button.Button(mute_x,mute_y,mute_button_image,.1)
+
+unmute_button_image = pygame.transform.scale(pygame.image.load('./images/unmuted.png').convert_alpha(),(75,75))
+unmute_button = button.Button(unmute_x,unmute_y,mute_button_image,.1)
+
 # start and exit images
-start_image = pygame.image.load("./images/start.jpg").convert_alpha()
-exit_image = pygame.image.load("./images/exit.jpg").convert_alpha()
+start_image =  pygame.transform.scale(pygame.image.load("./images/start2.png").convert_alpha(),(319,200))
+exit_image =  pygame.transform.scale(pygame.image.load("./images/exit2.png").convert_alpha(),(319,200))
 # create button instance
 play_button = button.Button(350, 400, start_image, 0.8)
 exit_button = button.Button(700, 400, exit_image, 0.8)
 
 # select no of players images (from Shreeya's code)
-select_two_players_img = pygame.transform.scale(pygame.image.load("./images/player2.jpg").convert_alpha(), (200, 200))
-select_three_players_img = pygame.transform.scale(pygame.image.load("./images/player3.jpg").convert_alpha(), (200, 200))
-select_four_players_img = pygame.transform.scale(pygame.image.load("./images/player4.jpg").convert_alpha(), (200, 200))
+select_two_players_img = pygame.transform.scale(pygame.image.load("./images/player2.png").convert_alpha(), (200, 170))
+select_three_players_img = pygame.transform.scale(pygame.image.load("./images/player3.png").convert_alpha(), (200, 170))
+select_four_players_img = pygame.transform.scale(pygame.image.load("./images/player4.png").convert_alpha(), (200, 170))
 select_two_players_button = button.Button(250, 400, select_two_players_img, 0.8)
 select_three_players_button = button.Button(510, 400, select_three_players_img, 0.8)
 select_four_players_button = button.Button(770, 400, select_four_players_img, 0.8)
 
 # Roll dice button image
 # button_img = pygame.image.load("./dice_images/click me.jpg").convert_alpha()
-roll_dice_button_img = pygame.transform.scale(pygame.image.load("./dice_images/click me.jpg").convert_alpha(),
-                                              (100, 100))
-roll_dice_button = button.Button(700, 600, roll_dice_button_img, 0.06)
+roll_dice_button_img = pygame.transform.scale(pygame.image.load("./images/roll2.png").convert_alpha(),(240, 150))
+roll_dice_button = button.Button(900, 600, roll_dice_button_img, 0.06)
 
-# background_image = pygame.image.load("./dice_images/bg.jpg")
-# background_image_rect = background_image.get_rect()
 # game board image
-snake_and_ladder_board_image = pygame.image.load("./images/istockphoto-531466314-1024x1024.jpg")
+snake_and_ladder_board_image = pygame.image.load("./images/cleanedup_gameboard_resized.jpg")
 game_board_image = pygame.transform.scale(snake_and_ladder_board_image, (700, 700))
 
 # pawn images
@@ -110,6 +133,23 @@ r = 0
 resized = [False, False, False, False]
 
 current_player = 1  # Start with Player 1
+
+#Background music
+mixer.music.load('./audio/background_music.mp3')
+mixer.music.play(-1) #the -1 allows the music to play on loop
+
+def mute():
+    mixer.music.pause()
+def unmute():
+    mixer.music.unpause()
+
+#drawing the mute button
+def mutebutton():
+   screen.blit(mute_button_image, (mute_x,mute_y))
+
+#drawing the unmute button
+def unmutebutton():
+    screen.blit(unmute_button_image,(unmute_x,unmute_y))
 
 
 # Defining background
@@ -347,6 +387,7 @@ def game_board_screen(player_count):
     pygame.display.set_caption("Snake and ladder: Game Board Screen")
     size = pygame.transform.scale(background_image,(1200,800))
     current_player = 1
+    mouse_events = [pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN]
     run = True
     while run:
         clock = pygame.time.Clock()
@@ -373,7 +414,16 @@ def game_board_screen(player_count):
                 # pygame.QUIT
                 draw_label2()
                 sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.event.set_blocked(mouse_events)
+                mouse_pos = pygame.mouse.get_pos()
+                if mute_button.rect.collidepoint(mouse_pos):
+                    mute()
+
+                elif unmute_button.rect.collidepoint(mouse_pos):
+                    unmute()
+
                 display_roll_message(current_player)
                 if roll_dice_button.rect.collidepoint(event.pos):
                     print(f"playing for current_player = {current_player}")
@@ -422,10 +472,13 @@ def game_board_screen(player_count):
                         roll_dice_button.draw(screen)
                         dice1_button.draw(screen)
                         dice2_button.draw(screen)
+                        mutebutton()
+                        unmutebutton()
                         display_players(player_count)
                         display_pawns(player_count=player_count)
                         pygame.display.update()
                         pygame.time.delay(200)  # Add a delay of 50 milliseconds between frames
+
 
                     # Play turn for current player
                     players_current_pos = players.get_player_current_postion(current_player)
@@ -455,8 +508,10 @@ def game_board_screen(player_count):
                             print(f"next players is = {current_player}")
                         else:
                             print(f"Game Over !!!!")
-
-
+                pygame.event.set_allowed(mouse_events)
+                pygame.event.clear()
+        mutebutton()
+        unmutebutton()
         pygame.display.update()
 
 
